@@ -1,5 +1,5 @@
 import json
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 
 import numpy as np
@@ -9,6 +9,7 @@ import streamlit as st
 
 import pydeck.bindings.json_tools as _pdk_json
 
+
 _pdk_json.serialize = lambda obj: json.dumps(
     obj,
     sort_keys=True,
@@ -17,28 +18,58 @@ _pdk_json.serialize = lambda obj: json.dumps(
 )
 
 
-st.set_page_config(page_title="Live Fires", layout="wide")
+st.set_page_config(page_title="Live Fire Activity", layout="wide")
 
 
-DATA_PATH = Path("data/fires/viirs_west_recent.parquet")
+RECENT_DATA_PATHS = [
+    Path("data/active_fire/firms_viirs_snpp_nrt_recent.parquet"),
+    Path("data/fires/viirs_west_recent.parquet"),
+]
 
 CONTINENTAL_VIEW = pdk.ViewState(
-    latitude=39.5, longitude=-98.0, zoom=3.3, pitch=0, bearing=0
+    latitude=39.5,
+    longitude=-112.0,
+    zoom=4.0,
+    pitch=0,
+    bearing=0,
 )
 
 CONFIDENCE_LABELS = {"l": "Low", "n": "Nominal", "h": "High"}
 
 
+def find_recent_data_path() -> Path | None:
+    """Find the newest supported recent active-fire file path."""
+    for path in RECENT_DATA_PATHS:
+        if path.exists():
+            return path
+    return None
+
+
 @st.cache_data
-def load_recent(file_mtime):
-    df = pd.read_parquet(DATA_PATH)
-    df["acq_date"] = pd.to_datetime(df["acq_date"])
+def load_recent(path_str: str, file_mtime: float) -> pd.DataFrame:
+    """Load recent active-fire detections."""
+    df = pd.read_parquet(path_str)
+
+    df["acq_date"] = pd.to_datetime(df["acq_date"], errors="coerce")
     df["frp"] = pd.to_numeric(df["frp"], errors="coerce").fillna(0.0)
-    return df
+
+    if "source" not in df.columns:
+        df["source"] = "VIIRS_SNPP_NRT"
+
+    if "satellite" not in df.columns:
+        df["satellite"] = "—"
+
+    if "daynight" not in df.columns:
+        df["daynight"] = "—"
+
+    if "confidence" not in df.columns:
+        df["confidence"] = "n"
+
+    return df.dropna(subset=["acq_date", "latitude", "longitude"])
 
 
-def days_ago_color(days):
-    # Fresh = bright yellow-white, older = deep red.
+def days_ago_color(days: int) -> list[int]:
+    """Map age in days to a fire-like color ramp."""
     stops = [
         (0, [255, 255, 200]),
         (1, [255, 220, 120]),
@@ -46,34 +77,44 @@ def days_ago_color(days):
         (6, [200, 40, 20]),
         (10, [120, 20, 20]),
     ]
+
     for (lo_d, lo_c), (hi_d, hi_c) in zip(stops, stops[1:]):
         if days <= hi_d:
             t = (days - lo_d) / max(hi_d - lo_d, 1)
             return [int(lo_c[i] + t * (hi_c[i] - lo_c[i])) for i in range(3)]
+
     return stops[-1][1]
 
 
-st.title("Live Fires — US West")
+st.title("Live Fire Activity — U.S. West")
 
 st.write(
-    "VIIRS satellite fire detections from the last several days across the western "
-    "United States. Each point is a 375 m pixel where the satellite detected active "
-    "burning. Brighter points are more recent; larger points burned more intensely."
+    "This page maps recent VIIRS satellite active-fire detections across the western "
+    "United States. Each point is a satellite-detected thermal anomaly pixel. "
+    "Brighter points are more recent; larger points have higher fire radiative power."
 )
 
-if not DATA_PATH.exists():
+st.warning(
+    "FIRMS detections are not official fire perimeters or burned-area estimates. "
+    "Point size is based on fire radiative power, not fire size."
+)
+
+DATA_PATH = find_recent_data_path()
+
+if DATA_PATH is None:
     st.error(
-        "No recent fire data found. Run fetch_firms.py --recent to create "
-        "data/fires/viirs_west_recent.parquet."
+        "No recent fire data found. Run `python fetch_firms.py --recent` to create "
+        "`data/active_fire/firms_viirs_snpp_nrt_recent.parquet`."
     )
     st.stop()
 
-data = load_recent(DATA_PATH.stat().st_mtime)
+data = load_recent(str(DATA_PATH), DATA_PATH.stat().st_mtime)
 
 latest = data["acq_date"].max()
 earliest = data["acq_date"].min()
 
 days_since = (date.today() - latest.date()).days
+
 if days_since <= 1:
     freshness = "Updated within the last day."
 elif days_since <= 7:
@@ -85,15 +126,17 @@ else:
     )
 
 st.info(
-    f"Showing the latest committed snapshot, {earliest.date()} to "
+    f"Showing the latest available snapshot, {earliest.date()} to "
     f"{latest.date()}. {freshness}"
 )
 
+st.caption(f"Loaded data file: `{DATA_PATH}`")
 
 st.sidebar.header("Display")
 
 view_mode = st.sidebar.radio(
-    "Style", ["Glowing points", "Heatmap"]
+    "Style",
+    ["Glowing points", "Heatmap"],
 )
 
 min_frp = st.sidebar.slider(
@@ -104,18 +147,24 @@ min_frp = st.sidebar.slider(
     step=1.0,
 )
 
+available_confidence = [
+    code for code in ["h", "n", "l"] if code in set(data["confidence"].dropna().astype(str))
+]
+
+if not available_confidence:
+    available_confidence = sorted(data["confidence"].dropna().astype(str).unique().tolist())
+
 confidence_filter = st.sidebar.multiselect(
     "Confidence",
-    options=["h", "n", "l"],
-    default=["h", "n", "l"],
-    format_func=lambda code: CONFIDENCE_LABELS.get(code, code),
+    options=available_confidence,
+    default=available_confidence,
+    format_func=lambda code: CONFIDENCE_LABELS.get(code, str(code)),
 )
 
-
 filtered = data[
-    (data["frp"] >= min_frp) & (data["confidence"].isin(confidence_filter))
+    (data["frp"] >= min_frp)
+    & (data["confidence"].astype(str).isin([str(code) for code in confidence_filter]))
 ].copy()
-
 
 st.caption(
     f"Showing {len(filtered):,} of {len(data):,} detections "
@@ -123,24 +172,27 @@ st.caption(
 )
 
 col1, col2, col3 = st.columns(3)
+
 col1.metric("Detections", f"{len(filtered):,}")
 col2.metric("Max fire power", f"{filtered['frp'].max():.0f} MW" if len(filtered) else "—")
 col3.metric("Most recent", f"{latest.date()}")
-
 
 if filtered.empty:
     st.info("No detections match the current filters.")
     st.stop()
 
-
 filtered["days_old"] = (latest - filtered["acq_date"]).dt.days
 filtered["color"] = filtered["days_old"].apply(days_ago_color)
 filtered["radius"] = np.sqrt(filtered["frp"].clip(lower=1)) * 250
 filtered["date_str"] = filtered["acq_date"].dt.strftime("%Y-%m-%d")
-filtered["conf_label"] = filtered["confidence"].map(CONFIDENCE_LABELS).fillna("—")
+filtered["conf_label"] = filtered["confidence"].map(CONFIDENCE_LABELS).fillna(
+    filtered["confidence"].astype(str)
+)
+filtered["source_label"] = filtered["source"].fillna("—").astype(str)
+filtered["satellite_label"] = filtered["satellite"].fillna("—").astype(str)
+filtered["daynight_label"] = filtered["daynight"].fillna("—").astype(str)
 
 records = filtered.to_dict(orient="records")
-
 
 if view_mode == "Glowing points":
     layer = pdk.Layer(
@@ -155,10 +207,18 @@ if view_mode == "Glowing points":
         pickable=True,
         stroked=False,
     )
+
     tooltip = {
-        "html": "<b>{date_str}</b><br/>Fire power: {frp} MW<br/>"
-                "Confidence: {conf_label}"
+        "html": (
+            "<b>{date_str}</b><br/>"
+            "Fire power: {frp} MW<br/>"
+            "Confidence: {conf_label}<br/>"
+            "Day/night: {daynight_label}<br/>"
+            "Satellite: {satellite_label}<br/>"
+            "Source: {source_label}"
+        )
     }
+
 else:
     layer = pdk.Layer(
         "HeatmapLayer",
@@ -171,7 +231,6 @@ else:
     )
     tooltip = None
 
-
 deck = pdk.Deck(
     layers=[layer],
     initial_view_state=CONTINENTAL_VIEW,
@@ -182,7 +241,7 @@ deck = pdk.Deck(
 st.pydeck_chart(deck, height=640)
 
 st.caption(
-    "Source: NASA FIRMS, VIIRS 375 m active fire product. A detection marks where a "
-    "satellite overpass sensed active burning; it is not an official fire perimeter. "
-    "Fire power (FRP) is measured in megawatts. Point color shows days since detection."
+    "Source: NASA FIRMS VIIRS active-fire detections. A detection marks where a "
+    "satellite overpass sensed active burning or a thermal anomaly. Fire radiative "
+    "power is measured in megawatts. Point color shows days since detection."
 )
