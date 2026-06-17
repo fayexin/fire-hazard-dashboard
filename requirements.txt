@@ -4,3 +4,5 @@ pydeck
 pyarrow
 requests
 plotly
+folium
+streamlit-folium
