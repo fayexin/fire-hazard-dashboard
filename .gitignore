@@ -21,3 +21,11 @@ Thumbs.db
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
+
+# Raw FPA-FOD query caches
+data/raw/fpa_fod/*.parquet
+!data/raw/fpa_fod/.gitkeep
+
+# Temporary label-building tests
+data/labels/test_*.parquet
+data/labels/test_*.json
