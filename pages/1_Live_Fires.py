@@ -157,7 +157,7 @@ def build_map(filtered: pd.DataFrame, view_mode: str, latest_detection: pd.Times
         tooltip = {
             "html": (
                 "<b>{date_str}</b><br/>"
-                "Fire power: {frp} MW<br/>"
+                "Fire radiative power: {frp} MW<br/>"
                 "Confidence: {conf_label}<br/>"
                 "Day/night: {daynight_label}<br/>"
                 "Satellite: {satellite_label}<br/>"
@@ -207,14 +207,14 @@ def filtered_csv_download(filtered: pd.DataFrame) -> bytes:
 st.title("Live Fire Activity — U.S. West")
 
 st.write(
-    "This page maps recent VIIRS satellite active-fire detections across the western "
-    "United States. Each point is a satellite-detected thermal anomaly pixel. "
-    "Brighter points are more recent; larger points have higher fire radiative power."
+    "This page shows recent NASA FIRMS VIIRS active-fire detections across the "
+    "western United States. Each point represents a satellite-detected thermal "
+    "anomaly pixel from a recent overpass."
 )
 
 st.warning(
-    "FIRMS detections are not official fire perimeters or burned-area estimates. "
-    "Point size is based on fire radiative power, not fire size."
+    "Research and visualization use only. FIRMS detections are not official fire "
+    "perimeters, burned-area estimates, evacuation guidance, or emergency warnings."
 )
 
 DATA_PATH = find_recent_data_path()
@@ -227,6 +227,13 @@ if DATA_PATH is None:
     st.stop()
 
 data = load_recent(str(DATA_PATH), DATA_PATH.stat().st_mtime)
+
+if data.empty:
+    st.error(
+        "The recent FIRMS file was found, but it does not contain valid detections. "
+        "Fetch the recent snapshot again with `python fetch_firms.py --recent`."
+    )
+    st.stop()
 
 latest = data["acq_date"].max()
 earliest = data["acq_date"].min()
@@ -244,11 +251,14 @@ else:
     )
 
 st.info(
-    f"Showing the latest available snapshot, {earliest.date()} to "
-    f"{latest.date()}. {freshness}"
+    f"**Data snapshot:** {earliest.date()} to {latest.date()}  \n"
+    f"**Status:** {freshness}"
 )
 
-st.caption(f"Loaded data file: `{DATA_PATH}`")
+st.caption(
+    f"Loaded file: `{DATA_PATH}`. The date range is based on detection dates in the "
+    "current local FIRMS snapshot."
+)
 
 st.sidebar.header("Filters")
 
@@ -274,7 +284,7 @@ start_date, end_date = normalize_date_range(
 )
 
 min_frp = st.sidebar.slider(
-    "Minimum fire power (FRP, MW)",
+    "Minimum fire radiative power (FRP, MW)",
     0.0,
     float(max(data["frp"].max(), 1.0)),
     0.0,
@@ -346,30 +356,29 @@ night_count = int((filtered["daynight"] == "N").sum())
 
 metric_col1, metric_col2, metric_col3, metric_col4, metric_col5 = st.columns(5)
 
-metric_col1.metric("Detections", f"{len(filtered):,}")
-metric_col2.metric("Max FRP", f"{filtered['frp'].max():.0f} MW")
-metric_col3.metric("Median FRP", f"{filtered['frp'].median():.1f} MW")
-metric_col4.metric("High confidence", f"{high_count:,}")
-metric_col5.metric("Night detections", f"{night_count:,}")
+metric_col1.metric("Displayed detections", f"{len(filtered):,}")
+metric_col2.metric("Maximum observed FRP", f"{filtered['frp'].max():.0f} MW")
+metric_col3.metric("Median observed FRP", f"{filtered['frp'].median():.1f} MW")
+metric_col4.metric("High-confidence detections", f"{high_count:,}")
+metric_col5.metric("Nighttime detections", f"{night_count:,}")
 
-with st.expander("Legend and interpretation", expanded=True):
-    st.write(
-        "**Color:** brighter yellow-white points are newer detections; darker red "
-        "points are older detections in the current snapshot."
-    )
-    st.write(
-        "**Size:** larger points have higher fire radiative power, or FRP. FRP is "
-        "a satellite-derived measure of radiant energy from active burning. It is "
-        "not burned area."
-    )
-    st.write(
-        "**Confidence:** high, nominal, and low indicate the detection confidence "
-        "reported by FIRMS. Low-confidence detections should be interpreted with "
-        "more caution."
-    )
-    st.write(
-        "**Day/night:** day and night detections can differ because satellite "
-        "viewing conditions, background temperature, and fire behavior change."
+with st.expander("How to read this map", expanded=True):
+    st.markdown(
+        """
+        **Point color** shows recency within the current snapshot. Brighter yellow-white
+        points are newer detections, while darker red points are older detections.
+
+        **Point size** is based on fire radiative power, or FRP. FRP measures radiant
+        energy from active burning within a satellite pixel. It should not be read as
+        total fire size or burned area.
+
+        **Confidence** comes from FIRMS. High-confidence detections are generally more
+        reliable. Low-confidence detections should be read with more caution.
+
+        **Day/night** matters because satellite viewing conditions, background
+        temperature, and fire behavior can differ between daytime and nighttime
+        overpasses.
+        """
     )
 
 deck = build_map(filtered, view_mode=view_mode, latest_detection=latest)
