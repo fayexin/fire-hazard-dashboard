@@ -11,6 +11,8 @@ st.set_page_config(
 )
 
 
+
+
 RECENT_DATA_PATHS = [
     Path("data/active_fire/firms_viirs_snpp_nrt_recent.parquet"),
     Path("data/fires/viirs_west_recent.parquet"),
@@ -54,13 +56,12 @@ def page_card(title: str, status: str, description: str) -> None:
         unsafe_allow_html=True,
     )
 
-
-st.title("Wildfire Activity and Probability Dashboard — U.S. West")
+st.title("Wildfire Activity Dashboard — U.S. West")
 
 st.write(
-    "This project analyzes wildfire activity across the western United States using "
-    "satellite active-fire detections, historical fire records, environmental data, "
-    "and an experimental monthly fire probability model."
+    "This dashboard maps recent satellite-detected active-fire activity across the "
+    "western United States using NASA FIRMS VIIRS data. The current version focuses "
+    "on live fire activity and data interpretation."
 )
 
 st.warning(
