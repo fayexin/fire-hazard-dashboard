@@ -21,3 +21,11 @@ Thumbs.db
 
 # Jupyter checkpoints
 .ipynb_checkpoints/
+
+# Full raw historical FIRMS archive
+data/active_fire/firms_viirs_snpp_sp_*.parquet
+
+# Keep derived summaries small and commit-ready
+!data/derived/
+!data/derived/*.parquet
+!data/derived/*.json
