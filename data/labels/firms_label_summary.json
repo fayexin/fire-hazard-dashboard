@@ -1,0 +1,28 @@
+{
+  "source": "VIIRS_SNPP_SP",
+  "raw_pattern": "firms_viirs_snpp_sp_*.parquet",
+  "western_states": [
+    "AZ",
+    "CA",
+    "CO",
+    "ID",
+    "MT",
+    "NM",
+    "NV",
+    "OR",
+    "UT",
+    "WA",
+    "WY"
+  ],
+  "min_detections_for_positive_label": 1,
+  "rows": 71208,
+  "counties": 414,
+  "year_months": 172,
+  "start_year": 2012,
+  "end_year": 2026,
+  "positive_count": 40756,
+  "negative_count": 30452,
+  "positive_rate": 0.5723514211886305,
+  "total_detection_count": 2994043,
+  "note": "fire_occurrence is a FIRMS-detection-based county-month label. It is not an official wildfire ignition, fire perimeter, burned-area, or emergency risk label."
+}

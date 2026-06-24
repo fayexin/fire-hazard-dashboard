@@ -29,3 +29,15 @@ data/active_fire/firms_viirs_snpp_sp_*.parquet
 !data/derived/
 !data/derived/*.parquet
 !data/derived/*.json
+
+# Full raw historical FIRMS archive stays local
+data/active_fire/firms_viirs_snpp_sp_*.parquet
+
+# Local boundary files for label building
+data/context/cb_2023_us_county_500k.zip
+data/context/cb_2023_us_county_500k/
+
+# Derived label outputs can be committed
+!data/labels/
+!data/labels/*.parquet
+!data/labels/*.json
