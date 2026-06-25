@@ -6,3 +6,6 @@ requests
 plotly
 folium
 streamlit-folium
+scikit-learn
+xgboost
+joblib
