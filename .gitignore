@@ -41,3 +41,6 @@ data/context/cb_2023_us_county_500k/
 !data/labels/
 !data/labels/*.parquet
 !data/labels/*.json
+
+/data/weather/gridmet_raw/
+/data/weather/gridmet_monthly_parts/
