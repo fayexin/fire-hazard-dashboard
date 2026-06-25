@@ -1,0 +1,325 @@
+{
+  "input": "data\\features\\county_month_model_table_v1.parquet",
+  "target": "meaningful_fire_activity",
+  "train_rows": 44712,
+  "validation_rows": 4968,
+  "test_rows": 14904,
+  "train_positive_rate": 0.33004562533548043,
+  "validation_positive_rate": 0.2890499194847021,
+  "test_positive_rate": 0.32615405260332797,
+  "predictor_count_before_encoding": 73,
+  "transformed_feature_count": 84,
+  "selected_model_by_validation_brier": "p_xgboost",
+  "xgboost_best_iteration": 621,
+  "validation_metrics": {
+    "p_global_prevalence": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.5,
+      "pr_auc": 0.2890499194847021,
+      "brier_score": 0.2071807114287929,
+      "log_loss": 0.6051868552806173,
+      "expected_calibration_error_10_bins": 0.040995705850778386,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.22088353413654618,
+        "recall": 0.0383008356545961,
+        "lift_over_prevalence": 0.7641708896868812
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.28169014084507044,
+        "recall": 0.09749303621169916,
+        "lift_over_prevalence": 0.9745380360155361
+      },
+      "brier_skill_vs_global": 0.0
+    },
+    "p_month_climatology": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.5719935835354909,
+      "pr_auc": 0.3371153095689852,
+      "brier_score": 0.20577861884795606,
+      "log_loss": 0.6012896622063041,
+      "expected_calibration_error_10_bins": 0.04545345774444252,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.3815261044176707,
+        "recall": 0.06615598885793872,
+        "lift_over_prevalence": 1.3199315367318858
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.4024144869215292,
+        "recall": 0.1392757660167131,
+        "lift_over_prevalence": 1.3921971943079088
+      },
+      "brier_skill_vs_global": 0.006767486080955676
+    },
+    "p_state_month_climatology": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.7682786627318241,
+      "pr_auc": 0.5759057470718825,
+      "brier_score": 0.16790275889325088,
+      "log_loss": 0.5080402635311828,
+      "expected_calibration_error_10_bins": 0.04543866286144259,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.7429718875502008,
+        "recall": 0.1288300835654596,
+        "lift_over_prevalence": 2.570392992583146
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.676056338028169,
+        "recall": 0.233983286908078,
+        "lift_over_prevalence": 2.3388912864372866
+      },
+      "brier_skill_vs_global": 0.18958305657253083
+    },
+    "p_county_month_climatology": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.8976070751458216,
+      "pr_auc": 0.8057956156767677,
+      "brier_score": 0.11602946198921535,
+      "log_loss": 0.37991679073377904,
+      "expected_calibration_error_10_bins": 0.0804082947758095,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9558232931726908,
+        "recall": 0.16573816155988857,
+        "lift_over_prevalence": 3.306775849917777
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.9195171026156942,
+        "recall": 0.31824512534818944,
+        "lift_over_prevalence": 3.1811705889935715
+      },
+      "brier_skill_vs_global": 0.4399601141002252
+    },
+    "p_logistic_regression": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.9021597601870049,
+      "pr_auc": 0.8280503730143982,
+      "brier_score": 0.11062010829445407,
+      "log_loss": 0.35407109829429023,
+      "expected_calibration_error_10_bins": 0.053070282279475835,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9799196787148594,
+        "recall": 0.16991643454038996,
+        "lift_over_prevalence": 3.3901399469745273
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.9617706237424547,
+        "recall": 0.3328690807799443,
+        "lift_over_prevalence": 3.3273512943959016
+      },
+      "brier_skill_vs_global": 0.4660694640365992
+    },
+    "p_xgboost": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.9105350366091793,
+      "pr_auc": 0.8418894743001071,
+      "brier_score": 0.10203239307156031,
+      "log_loss": 0.32983591055684874,
+      "expected_calibration_error_10_bins": 0.023324916824544156,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9879518072289156,
+        "recall": 0.1713091922005571,
+        "lift_over_prevalence": 3.4179279793267776
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.96579476861167,
+        "recall": 0.3342618384401114,
+        "lift_over_prevalence": 3.341273266338981
+      },
+      "brier_skill_vs_global": 0.5075198247563293
+    }
+  },
+  "test_metrics": {
+    "p_global_prevalence": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.5,
+      "pr_auc": 0.32615405260332797,
+      "brier_score": 0.21979273091208318,
+      "log_loss": 0.6314557915465312,
+      "expected_calibration_error_10_bins": 0.0038915727321524596,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.19302949061662197,
+        "recall": 0.02962353425221148,
+        "lift_over_prevalence": 0.591835327741233
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.21797451374916163,
+        "recall": 0.06685867105533841,
+        "lift_over_prevalence": 0.6683176615752942
+      },
+      "brier_skill_vs_global": 0.0
+    },
+    "p_month_climatology": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.5958740407402253,
+      "pr_auc": 0.3896244139510942,
+      "brier_score": 0.21447795702137035,
+      "log_loss": 0.6190598711177229,
+      "expected_calibration_error_10_bins": 0.01291185817385746,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.450402144772118,
+        "recall": 0.06912157992182678,
+        "lift_over_prevalence": 1.3809490980628774
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.4279007377598927,
+        "recall": 0.13124871425632587,
+        "lift_over_prevalence": 1.311958978723193
+      },
+      "brier_skill_vs_global": 0.024180844692442194
+    },
+    "p_state_month_climatology": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.7632077663659921,
+      "pr_auc": 0.6050136897343126,
+      "brier_score": 0.17714369715449332,
+      "log_loss": 0.5318196017089021,
+      "expected_calibration_error_10_bins": 0.020409459333897487,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.7546916890080428,
+        "recall": 0.11581979016663238,
+        "lift_over_prevalence": 2.313911732766071
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.710261569416499,
+        "recall": 0.21785640814647192,
+        "lift_over_prevalence": 2.177687395717651
+      },
+      "brier_skill_vs_global": 0.19404205762678028
+    },
+    "p_county_month_climatology": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.8859198698015731,
+      "pr_auc": 0.8200303207035766,
+      "brier_score": 0.12445521248163925,
+      "log_loss": 0.40349356323618535,
+      "expected_calibration_error_10_bins": 0.06262322034627273,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9664879356568364,
+        "recall": 0.14832339024891997,
+        "lift_over_prevalence": 2.9632866062599237
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.9450033534540577,
+        "recall": 0.2898580538983748,
+        "lift_over_prevalence": 2.8974141081833524
+      },
+      "brier_skill_vs_global": 0.4337610167307071
+    },
+    "p_logistic_regression": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.8963592737200005,
+      "pr_auc": 0.8312173452914304,
+      "brier_score": 0.11765517960994729,
+      "log_loss": 0.3720632737172899,
+      "expected_calibration_error_10_bins": 0.015666948111113674,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9865951742627346,
+        "recall": 0.15140917506685866,
+        "lift_over_prevalence": 3.0249361195663025
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.9644533869885983,
+        "recall": 0.2958239045463896,
+        "lift_over_prevalence": 2.9570486072162248
+      },
+      "brier_skill_vs_global": 0.46469940510903784
+    },
+    "p_xgboost": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.9092439129722035,
+      "pr_auc": 0.856722493377144,
+      "brier_score": 0.10865979284390234,
+      "log_loss": 0.3456901815419279,
+      "expected_calibration_error_10_bins": 0.014001019415289393,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9959785522788204,
+        "recall": 0.15284920798189672,
+        "lift_over_prevalence": 3.053705892442612
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.9805499664654594,
+        "recall": 0.30076116025509153,
+        "lift_over_prevalence": 3.0064012960710156
+      },
+      "brier_skill_vs_global": 0.5056260851166815
+    }
+  },
+  "model_selection_rule": "Choose among county-month climatology, logistic regression, and XGBoost using the lowest 2022 validation Brier score. The 2023-2025 test metrics are not used for selection.",
+  "probability_note": "No class weighting is used because the output is intended to represent occurrence probability. Calibration is evaluated but not adjusted in this first comparison.",
+  "package_versions": {
+    "pandas": "3.0.3",
+    "scikit_learn": "1.9.0",
+    "xgboost": "3.2.0"
+  }
+}
