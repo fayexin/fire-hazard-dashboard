@@ -377,56 +377,87 @@ if display_scores.empty:
         "No counties meet the minimum displayed probability."
     )
 else:
-    map_figure = px.choropleth(
-        display_scores,
+    band_order = [
+        "Below threshold",
+        "Very low",
+        "Low",
+        "Moderate",
+        "High",
+        "Very high",
+    ]
+
+    band_colors = {
+        "Below threshold": "#e5e7eb",
+        "Very low": "#fff7bc",
+        "Low": "#fec44f",
+        "Moderate": "#fe9929",
+        "High": "#ec7014",
+        "Very high": "#993404",
+    }
+    
+    map_scores = month_scores.copy()
+
+    map_scores["map_band"] = map_scores["probability_band"].astype(str)
+
+    map_scores.loc[
+        map_scores["predicted_probability"] < minimum_probability,
+        "map_band",
+    ] = "Below threshold"
+    
+    
+    map_figure = px.choropleth_map(
+        map_scores,
         geojson=county_geojson,
         locations="county_geoid",
         featureidkey="properties.county_geoid",
-        color="predicted_probability",
-        color_continuous_scale="YlOrRd",
-        range_color=(0.0, 1.0),
+        color="map_band",
+        category_orders={"map_band": band_order},
+        color_discrete_map=band_colors,
         hover_name="county_name",
         hover_data={
             "state": True,
-            "county_geoid": True,
+            "county_geoid": False,
             "predicted_probability": ":.1%",
             "probability_band": True,
+            "map_band": False,
         },
         labels={
-            "predicted_probability": (
-                "Predicted probability"
-            ),
-            "probability_band": (
-                "Display band"
-            ),
-            "county_geoid": (
-                "County GEOID"
-            ),
+            "state": "State",
+            "predicted_probability": "Probability",
+            "probability_band": "Probability band",
         },
+        map_style="carto-positron",
+        center={"lat": 40.0, "lon": -115.0},
+        zoom=3.35,
+        opacity=0.78,
+        height=720,
     )
-
-    map_figure.update_geos(
-        fitbounds="locations",
-        visible=False,
+    
+    map_figure.update_traces(
+        marker_line_width=0.35,
+        marker_line_color="rgba(60, 60, 60, 0.55)",
     )
-
+    
     map_figure.update_layout(
-        height=650,
-        margin=dict(
-            l=0,
-            r=0,
-            t=10,
-            b=0,
-        ),
-        coloraxis_colorbar=dict(
-            title="Probability",
-            tickformat=".0%",
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend=dict(
+            title="Probability band",
+            orientation="h",
+            yanchor="bottom",
+            y=0.01,
+            xanchor="center",
+            x=0.5,
+            bgcolor="rgba(255,255,255,0.85)",
         ),
     )
-
+    
     st.plotly_chart(
         map_figure,
         use_container_width=True,
+        config={
+            "scrollZoom": True,
+            "displayModeBar": False,
+        },
     )
 
 st.caption(
