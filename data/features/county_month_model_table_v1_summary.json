@@ -4,7 +4,7 @@
   "sampling_method": "Nearest gridMET cell to a representative point inside each county",
   "observation_years": [
     2012,
-    2025
+    2026
   ],
   "prediction_timing": "Prediction month t uses weather from t-1 and rolling weather from t-3 through t-1.",
   "weather_features": [
@@ -74,19 +74,19 @@
     },
     "excluded": {
       "rows": 6624,
-      "weather_complete_rate": 0.625,
+      "weather_complete_rate": 0.8125,
       "missing_rates": {
-        "gridmet_tmax_prev1m_mean_c": 0.25,
-        "gridmet_tmax_prev1m_max_c": 0.25,
-        "gridmet_precip_prev1m_sum_mm": 0.25,
-        "gridmet_vpd_prev1m_mean_kpa": 0.25,
-        "gridmet_vpd_prev1m_max_kpa": 0.25,
-        "gridmet_erc_prev1m_mean": 0.25,
-        "gridmet_erc_prev1m_max": 0.25,
-        "gridmet_precip_prev3m_sum_mm": 0.375,
-        "gridmet_tmax_prev3m_mean_c": 0.375,
-        "gridmet_vpd_prev3m_mean_kpa": 0.375,
-        "gridmet_erc_prev3m_mean": 0.375
+        "gridmet_tmax_prev1m_mean_c": 0.0625,
+        "gridmet_tmax_prev1m_max_c": 0.0625,
+        "gridmet_precip_prev1m_sum_mm": 0.0625,
+        "gridmet_vpd_prev1m_mean_kpa": 0.0625,
+        "gridmet_vpd_prev1m_max_kpa": 0.0625,
+        "gridmet_erc_prev1m_mean": 0.0625,
+        "gridmet_erc_prev1m_max": 0.0625,
+        "gridmet_precip_prev3m_sum_mm": 0.1875,
+        "gridmet_tmax_prev3m_mean_c": 0.1875,
+        "gridmet_vpd_prev3m_mean_kpa": 0.1875,
+        "gridmet_erc_prev3m_mean": 0.1875
       }
     }
   },

@@ -1,0 +1,56 @@
+{
+  "target": "meaningful_fire_activity",
+  "training_period": "2013-2025",
+  "training_rows": 64584,
+  "training_positive_rate": 0.32599405425492384,
+  "tree_count": 622,
+  "predictor_count_before_encoding": 73,
+  "transformed_feature_count": 84,
+  "scored_rows": 69966,
+  "latest_scored_month": "2026-04-01",
+  "latest_scored_counties": 414,
+  "latest_probability_summary": {
+    "minimum": 0.0020098036620765924,
+    "median": 0.2489277422428131,
+    "maximum": 0.9990736246109009
+  },
+  "locked_evaluation": {
+    "evaluation_period": "2023-2025",
+    "test_metrics": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.9092439129722035,
+      "pr_auc": 0.856722493377144,
+      "brier_score": 0.10865979284390234,
+      "log_loss": 0.3456901815419279,
+      "expected_calibration_error_10_bins": 0.014001019415289393,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9959785522788204,
+        "recall": 0.15284920798189672,
+        "lift_over_prevalence": 3.053705892442612
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.9805499664654594,
+        "recall": 0.30076116025509153,
+        "lift_over_prevalence": 3.0064012960710156
+      },
+      "brier_skill_vs_global": 0.5056260851166815
+    },
+    "note": "These metrics come from the earlier model trained on 2013-2021 and selected with 2022 validation. They are not recomputed after fitting the deployment model on 2013-2025."
+  },
+  "score_interpretation": {
+    "post_training_score": "A probability generated for a month after the final deployment training year.",
+    "deployment_training_period": "An in-sample deployment-model score. It must not be used as model evaluation evidence.",
+    "probability_band": "A descriptive display category, not an official fire-danger classification."
+  },
+  "package_versions": {
+    "pandas": "3.0.3",
+    "scikit_learn": "1.9.0",
+    "xgboost": "3.2.0"
+  }
+}
