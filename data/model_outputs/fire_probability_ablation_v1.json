@@ -1,0 +1,471 @@
+{
+  "target": "meaningful_fire_activity",
+  "split_definition": {
+    "train": "2013-2021",
+    "validation": "2022",
+    "test": "2023-2025"
+  },
+  "comparison_design": "All XGBoost variants use the same train, validation, test split and hyperparameters. Feature groups are nested around a common season/geography baseline.",
+  "model_metadata": {
+    "xgb_season_geography": {
+      "numeric_feature_count": 6,
+      "categorical_features": [
+        "state"
+      ],
+      "numeric_features": [
+        "county_area_km2",
+        "county_centroid_latitude",
+        "county_centroid_longitude",
+        "month_cos",
+        "month_sin",
+        "months_since_panel_start"
+      ],
+      "transformed_feature_count": 17,
+      "best_iteration": 1095
+    },
+    "xgb_plus_fire_history": {
+      "numeric_feature_count": 61,
+      "categorical_features": [
+        "state"
+      ],
+      "numeric_features": [
+        "any_activity_lag_12m",
+        "any_activity_lag_1m",
+        "any_activity_lag_2m",
+        "any_activity_lag_3m",
+        "any_activity_lag_6m",
+        "any_positive_months_prev_12m",
+        "any_positive_months_prev_3m",
+        "any_positive_months_prev_6m",
+        "county_area_km2",
+        "county_centroid_latitude",
+        "county_centroid_longitude",
+        "county_prior_any_rate",
+        "county_prior_meaningful_rate",
+        "detection_count_lag_12m",
+        "detection_count_lag_1m",
+        "detection_count_lag_2m",
+        "detection_count_lag_3m",
+        "detection_count_lag_6m",
+        "eligible_detection_count_lag_12m",
+        "eligible_detection_count_lag_1m",
+        "eligible_detection_count_lag_2m",
+        "eligible_detection_count_lag_3m",
+        "eligible_detection_count_lag_6m",
+        "eligible_detections_prev_12m",
+        "eligible_detections_prev_3m",
+        "eligible_detections_prev_6m",
+        "high_confidence_count_lag_12m",
+        "high_confidence_count_lag_1m",
+        "high_confidence_count_lag_2m",
+        "high_confidence_count_lag_3m",
+        "high_confidence_count_lag_6m",
+        "max_observed_frp_lag_12m",
+        "max_observed_frp_lag_1m",
+        "max_observed_frp_lag_2m",
+        "max_observed_frp_lag_3m",
+        "max_observed_frp_lag_6m",
+        "mean_eligible_detections_prev_12m",
+        "mean_eligible_detections_prev_3m",
+        "mean_eligible_detections_prev_6m",
+        "meaningful_activity_lag_12m",
+        "meaningful_activity_lag_1m",
+        "meaningful_activity_lag_2m",
+        "meaningful_activity_lag_3m",
+        "meaningful_activity_lag_6m",
+        "meaningful_positive_months_prev_12m",
+        "meaningful_positive_months_prev_3m",
+        "meaningful_positive_months_prev_6m",
+        "month_cos",
+        "month_sin",
+        "months_since_panel_start",
+        "months_since_previous_meaningful_activity",
+        "no_previous_meaningful_activity",
+        "prior_observed_months",
+        "sum_observed_frp_lag_12m",
+        "sum_observed_frp_lag_1m",
+        "sum_observed_frp_lag_2m",
+        "sum_observed_frp_lag_3m",
+        "sum_observed_frp_lag_6m",
+        "total_detections_prev_12m",
+        "total_detections_prev_3m",
+        "total_detections_prev_6m"
+      ],
+      "transformed_feature_count": 73,
+      "best_iteration": 396
+    },
+    "xgb_plus_weather": {
+      "numeric_feature_count": 17,
+      "categorical_features": [
+        "state"
+      ],
+      "numeric_features": [
+        "county_area_km2",
+        "county_centroid_latitude",
+        "county_centroid_longitude",
+        "gridmet_erc_prev1m_max",
+        "gridmet_erc_prev1m_mean",
+        "gridmet_erc_prev3m_mean",
+        "gridmet_precip_prev1m_sum_mm",
+        "gridmet_precip_prev3m_sum_mm",
+        "gridmet_tmax_prev1m_max_c",
+        "gridmet_tmax_prev1m_mean_c",
+        "gridmet_tmax_prev3m_mean_c",
+        "gridmet_vpd_prev1m_max_kpa",
+        "gridmet_vpd_prev1m_mean_kpa",
+        "gridmet_vpd_prev3m_mean_kpa",
+        "month_cos",
+        "month_sin",
+        "months_since_panel_start"
+      ],
+      "transformed_feature_count": 28,
+      "best_iteration": 1308
+    },
+    "xgb_all_features": {
+      "numeric_feature_count": 72,
+      "categorical_features": [
+        "state"
+      ],
+      "numeric_features": [
+        "any_activity_lag_12m",
+        "any_activity_lag_1m",
+        "any_activity_lag_2m",
+        "any_activity_lag_3m",
+        "any_activity_lag_6m",
+        "any_positive_months_prev_12m",
+        "any_positive_months_prev_3m",
+        "any_positive_months_prev_6m",
+        "county_area_km2",
+        "county_centroid_latitude",
+        "county_centroid_longitude",
+        "county_prior_any_rate",
+        "county_prior_meaningful_rate",
+        "detection_count_lag_12m",
+        "detection_count_lag_1m",
+        "detection_count_lag_2m",
+        "detection_count_lag_3m",
+        "detection_count_lag_6m",
+        "eligible_detection_count_lag_12m",
+        "eligible_detection_count_lag_1m",
+        "eligible_detection_count_lag_2m",
+        "eligible_detection_count_lag_3m",
+        "eligible_detection_count_lag_6m",
+        "eligible_detections_prev_12m",
+        "eligible_detections_prev_3m",
+        "eligible_detections_prev_6m",
+        "gridmet_erc_prev1m_max",
+        "gridmet_erc_prev1m_mean",
+        "gridmet_erc_prev3m_mean",
+        "gridmet_precip_prev1m_sum_mm",
+        "gridmet_precip_prev3m_sum_mm",
+        "gridmet_tmax_prev1m_max_c",
+        "gridmet_tmax_prev1m_mean_c",
+        "gridmet_tmax_prev3m_mean_c",
+        "gridmet_vpd_prev1m_max_kpa",
+        "gridmet_vpd_prev1m_mean_kpa",
+        "gridmet_vpd_prev3m_mean_kpa",
+        "high_confidence_count_lag_12m",
+        "high_confidence_count_lag_1m",
+        "high_confidence_count_lag_2m",
+        "high_confidence_count_lag_3m",
+        "high_confidence_count_lag_6m",
+        "max_observed_frp_lag_12m",
+        "max_observed_frp_lag_1m",
+        "max_observed_frp_lag_2m",
+        "max_observed_frp_lag_3m",
+        "max_observed_frp_lag_6m",
+        "mean_eligible_detections_prev_12m",
+        "mean_eligible_detections_prev_3m",
+        "mean_eligible_detections_prev_6m",
+        "meaningful_activity_lag_12m",
+        "meaningful_activity_lag_1m",
+        "meaningful_activity_lag_2m",
+        "meaningful_activity_lag_3m",
+        "meaningful_activity_lag_6m",
+        "meaningful_positive_months_prev_12m",
+        "meaningful_positive_months_prev_3m",
+        "meaningful_positive_months_prev_6m",
+        "month_cos",
+        "month_sin",
+        "months_since_panel_start",
+        "months_since_previous_meaningful_activity",
+        "no_previous_meaningful_activity",
+        "prior_observed_months",
+        "sum_observed_frp_lag_12m",
+        "sum_observed_frp_lag_1m",
+        "sum_observed_frp_lag_2m",
+        "sum_observed_frp_lag_3m",
+        "sum_observed_frp_lag_6m",
+        "total_detections_prev_12m",
+        "total_detections_prev_3m",
+        "total_detections_prev_6m"
+      ],
+      "transformed_feature_count": 84,
+      "best_iteration": 621
+    }
+  },
+  "validation_metrics": {
+    "p_county_month_climatology": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.8976070751458216,
+      "pr_auc": 0.8057956156767677,
+      "brier_score": 0.11602946198921535,
+      "log_loss": 0.37991679073377904,
+      "expected_calibration_error_10_bins": 0.0804082947758095,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9558232931726908,
+        "recall": 0.16573816155988857,
+        "lift_over_prevalence": 3.306775849917777
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.9195171026156942,
+        "recall": 0.31824512534818944,
+        "lift_over_prevalence": 3.1811705889935715
+      },
+      "brier_skill_vs_county_month_climatology": 0.0
+    },
+    "xgb_season_geography": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.9003945620936475,
+      "pr_auc": 0.8221299501356731,
+      "brier_score": 0.10785642916771021,
+      "log_loss": 0.3490055174054257,
+      "expected_calibration_error_10_bins": 0.03161553509311774,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9678714859437751,
+        "recall": 0.16782729805013927,
+        "lift_over_prevalence": 3.3484578984461524
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.9456740442655935,
+        "recall": 0.32729805013927576,
+        "lift_over_prevalence": 3.2716634066235852
+      },
+      "brier_skill_vs_county_month_climatology": 0.07043928913731234
+    },
+    "xgb_plus_fire_history": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.908005044211775,
+      "pr_auc": 0.83911372426278,
+      "brier_score": 0.1028313246985199,
+      "log_loss": 0.33311992356271547,
+      "expected_calibration_error_10_bins": 0.02353788558349662,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9919678714859438,
+        "recall": 0.17200557103064068,
+        "lift_over_prevalence": 3.431821995502903
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.96579476861167,
+        "recall": 0.3342618384401114,
+        "lift_over_prevalence": 3.341273266338981
+      },
+      "brier_skill_vs_county_month_climatology": 0.11374815554968432
+    },
+    "xgb_plus_weather": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.8982744710517765,
+      "pr_auc": 0.8143334505812002,
+      "brier_score": 0.11008006754824079,
+      "log_loss": 0.35504608791589043,
+      "expected_calibration_error_10_bins": 0.03493753441513554,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9598393574297188,
+        "recall": 0.16643454038997216,
+        "lift_over_prevalence": 3.3206698660939016
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.93158953722334,
+        "recall": 0.3224233983286908,
+        "lift_over_prevalence": 3.2229365048228087
+      },
+      "brier_skill_vs_county_month_climatology": 0.05127486018617877
+    },
+    "xgb_all_features": {
+      "rows": 4968,
+      "positive_count": 1436,
+      "prevalence": 0.2890499194847021,
+      "roc_auc": 0.9105350366091793,
+      "pr_auc": 0.8418894743001071,
+      "brier_score": 0.10203239307156031,
+      "log_loss": 0.32983591055684874,
+      "expected_calibration_error_10_bins": 0.023324916824544156,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 249,
+        "precision": 0.9879518072289156,
+        "recall": 0.1713091922005571,
+        "lift_over_prevalence": 3.4179279793267776
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 497,
+        "precision": 0.96579476861167,
+        "recall": 0.3342618384401114,
+        "lift_over_prevalence": 3.341273266338981
+      },
+      "brier_skill_vs_county_month_climatology": 0.12063374834019336
+    }
+  },
+  "test_metrics": {
+    "p_county_month_climatology": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.8859198698015731,
+      "pr_auc": 0.8200303207035766,
+      "brier_score": 0.12445521248163925,
+      "log_loss": 0.40349356323618535,
+      "expected_calibration_error_10_bins": 0.06262322034627273,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9664879356568364,
+        "recall": 0.14832339024891997,
+        "lift_over_prevalence": 2.9632866062599237
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.9450033534540577,
+        "recall": 0.2898580538983748,
+        "lift_over_prevalence": 2.8974141081833524
+      },
+      "brier_skill_vs_county_month_climatology": 0.0
+    },
+    "xgb_season_geography": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.8894698281856235,
+      "pr_auc": 0.8272608941661251,
+      "brier_score": 0.11924871758391085,
+      "log_loss": 0.37941548838423483,
+      "expected_calibration_error_10_bins": 0.012085594881864573,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9839142091152815,
+        "recall": 0.1509977370911335,
+        "lift_over_prevalence": 3.0167161844587853
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.959758551307847,
+        "recall": 0.2943838716313516,
+        "lift_over_prevalence": 2.9426540729669104
+      },
+      "brier_skill_vs_county_month_climatology": 0.04183428555470514
+    },
+    "xgb_plus_fire_history": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.9082741475592414,
+      "pr_auc": 0.8549813974633982,
+      "brier_score": 0.10951603670437768,
+      "log_loss": 0.34835864145113354,
+      "expected_calibration_error_10_bins": 0.01678153297411987,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9973190348525469,
+        "recall": 0.1530549269697593,
+        "lift_over_prevalence": 3.0578158599963707
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.9812206572769953,
+        "recall": 0.3009668792429541,
+        "lift_over_prevalence": 3.008457658106632
+      },
+      "brier_skill_vs_county_month_climatology": 0.12003656158206744
+    },
+    "xgb_plus_weather": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.8883494554981161,
+      "pr_auc": 0.8259422806876445,
+      "brier_score": 0.11950292158707351,
+      "log_loss": 0.3816636263959397,
+      "expected_calibration_error_10_bins": 0.013204983138612136,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9839142091152815,
+        "recall": 0.1509977370911335,
+        "lift_over_prevalence": 3.0167161844587853
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.95439302481556,
+        "recall": 0.29273811972845093,
+        "lift_over_prevalence": 2.9262031766819803
+      },
+      "brier_skill_vs_county_month_climatology": 0.039791751553164945
+    },
+    "xgb_all_features": {
+      "rows": 14904,
+      "positive_count": 4861,
+      "prevalence": 0.32615405260332797,
+      "roc_auc": 0.9092439129722035,
+      "pr_auc": 0.856722493377144,
+      "brier_score": 0.10865979284390234,
+      "log_loss": 0.3456901815419279,
+      "expected_calibration_error_10_bins": 0.014001019415289393,
+      "top_5_percent": {
+        "fraction": 0.05,
+        "rows": 746,
+        "precision": 0.9959785522788204,
+        "recall": 0.15284920798189672,
+        "lift_over_prevalence": 3.053705892442612
+      },
+      "top_10_percent": {
+        "fraction": 0.1,
+        "rows": 1491,
+        "precision": 0.9805499664654594,
+        "recall": 0.30076116025509153,
+        "lift_over_prevalence": 3.0064012960710156
+      },
+      "brier_skill_vs_county_month_climatology": 0.12691649729067955
+    }
+  },
+  "incremental_comparison": {
+    "weather_beyond_fire_history": {
+      "validation_brier_change": -0.0007989316269595842,
+      "validation_pr_auc_change": 0.002775750037327107,
+      "test_brier_change": -0.0008562438604753364,
+      "test_pr_auc_change": 0.001741095913745827,
+      "weather_improves_validation_brier": true,
+      "weather_improves_test_brier": true
+    }
+  }
+}
