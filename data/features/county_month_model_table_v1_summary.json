@@ -1,0 +1,94 @@
+{
+  "source": "gridMET",
+  "source_url": "https://www.northwestknowledge.net/metdata/data",
+  "sampling_method": "Nearest gridMET cell to a representative point inside each county",
+  "observation_years": [
+    2012,
+    2025
+  ],
+  "prediction_timing": "Prediction month t uses weather from t-1 and rolling weather from t-3 through t-1.",
+  "weather_features": [
+    "gridmet_tmax_prev1m_mean_c",
+    "gridmet_tmax_prev1m_max_c",
+    "gridmet_precip_prev1m_sum_mm",
+    "gridmet_vpd_prev1m_mean_kpa",
+    "gridmet_vpd_prev1m_max_kpa",
+    "gridmet_erc_prev1m_mean",
+    "gridmet_erc_prev1m_max",
+    "gridmet_precip_prev3m_sum_mm",
+    "gridmet_tmax_prev3m_mean_c",
+    "gridmet_vpd_prev3m_mean_kpa",
+    "gridmet_erc_prev3m_mean"
+  ],
+  "split_summary": {
+    "train": {
+      "rows": 44712,
+      "weather_complete_rate": 1.0,
+      "missing_rates": {
+        "gridmet_tmax_prev1m_mean_c": 0.0,
+        "gridmet_tmax_prev1m_max_c": 0.0,
+        "gridmet_precip_prev1m_sum_mm": 0.0,
+        "gridmet_vpd_prev1m_mean_kpa": 0.0,
+        "gridmet_vpd_prev1m_max_kpa": 0.0,
+        "gridmet_erc_prev1m_mean": 0.0,
+        "gridmet_erc_prev1m_max": 0.0,
+        "gridmet_precip_prev3m_sum_mm": 0.0,
+        "gridmet_tmax_prev3m_mean_c": 0.0,
+        "gridmet_vpd_prev3m_mean_kpa": 0.0,
+        "gridmet_erc_prev3m_mean": 0.0
+      }
+    },
+    "validation": {
+      "rows": 4968,
+      "weather_complete_rate": 1.0,
+      "missing_rates": {
+        "gridmet_tmax_prev1m_mean_c": 0.0,
+        "gridmet_tmax_prev1m_max_c": 0.0,
+        "gridmet_precip_prev1m_sum_mm": 0.0,
+        "gridmet_vpd_prev1m_mean_kpa": 0.0,
+        "gridmet_vpd_prev1m_max_kpa": 0.0,
+        "gridmet_erc_prev1m_mean": 0.0,
+        "gridmet_erc_prev1m_max": 0.0,
+        "gridmet_precip_prev3m_sum_mm": 0.0,
+        "gridmet_tmax_prev3m_mean_c": 0.0,
+        "gridmet_vpd_prev3m_mean_kpa": 0.0,
+        "gridmet_erc_prev3m_mean": 0.0
+      }
+    },
+    "test": {
+      "rows": 14904,
+      "weather_complete_rate": 1.0,
+      "missing_rates": {
+        "gridmet_tmax_prev1m_mean_c": 0.0,
+        "gridmet_tmax_prev1m_max_c": 0.0,
+        "gridmet_precip_prev1m_sum_mm": 0.0,
+        "gridmet_vpd_prev1m_mean_kpa": 0.0,
+        "gridmet_vpd_prev1m_max_kpa": 0.0,
+        "gridmet_erc_prev1m_mean": 0.0,
+        "gridmet_erc_prev1m_max": 0.0,
+        "gridmet_precip_prev3m_sum_mm": 0.0,
+        "gridmet_tmax_prev3m_mean_c": 0.0,
+        "gridmet_vpd_prev3m_mean_kpa": 0.0,
+        "gridmet_erc_prev3m_mean": 0.0
+      }
+    },
+    "excluded": {
+      "rows": 6624,
+      "weather_complete_rate": 0.625,
+      "missing_rates": {
+        "gridmet_tmax_prev1m_mean_c": 0.25,
+        "gridmet_tmax_prev1m_max_c": 0.25,
+        "gridmet_precip_prev1m_sum_mm": 0.25,
+        "gridmet_vpd_prev1m_mean_kpa": 0.25,
+        "gridmet_vpd_prev1m_max_kpa": 0.25,
+        "gridmet_erc_prev1m_mean": 0.25,
+        "gridmet_erc_prev1m_max": 0.25,
+        "gridmet_precip_prev3m_sum_mm": 0.375,
+        "gridmet_tmax_prev3m_mean_c": 0.375,
+        "gridmet_vpd_prev3m_mean_kpa": 0.375,
+        "gridmet_erc_prev3m_mean": 0.375
+      }
+    }
+  },
+  "limitation": "Representative-point weather is a low-compute approximation; it is not a county-wide area average."
+}
