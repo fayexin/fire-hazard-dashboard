@@ -33,6 +33,30 @@ GEOJSON_PATH = Path(
 )
 
 
+WEST_MAP_CENTER = {"lat": 40.0, "lon": -115.0}
+WEST_MAP_ZOOM = 4.2
+MAP_HEIGHT = 720
+
+
+BAND_ORDER = [
+    "Below threshold",
+    "Very low",
+    "Low",
+    "Moderate",
+    "High",
+    "Very high",
+]
+
+BAND_COLORS = {
+    "Below threshold": "#e5e7eb",
+    "Very low": "#fff7bc",
+    "Low": "#fec44f",
+    "Moderate": "#fe9929",
+    "High": "#ec7014",
+    "Very high": "#993404",
+}
+
+
 @st.cache_data
 def load_parquet(
     path_str: str,
@@ -84,18 +108,14 @@ def require_files() -> None:
         st.stop()
 
 
-def format_probability(
-    value: float | None,
-) -> str:
+def format_probability(value) -> str:
     if value is None or pd.isna(value):
         return "—"
 
-    return f"{value:.1%}"
+    return f"{float(value):.1%}"
 
 
-def cleaned_feature_name(
-    value: str,
-) -> str:
+def cleaned_feature_name(value: str) -> str:
     return (
         str(value)
         .replace("numeric__", "")
@@ -105,9 +125,7 @@ def cleaned_feature_name(
     )
 
 
-def filtered_csv(
-    frame: pd.DataFrame,
-) -> bytes:
+def filtered_csv(frame: pd.DataFrame) -> bytes:
     columns = [
         "month_start",
         "state",
@@ -129,6 +147,133 @@ def filtered_csv(
         .to_csv(index=False)
         .encode("utf-8")
     )
+
+
+def blank_probability_map():
+    """Show the western U.S. basemap without county probability overlays."""
+    dummy = pd.DataFrame(
+        {
+            "latitude": [WEST_MAP_CENTER["lat"]],
+            "longitude": [WEST_MAP_CENTER["lon"]],
+        }
+    )
+
+    if hasattr(px, "scatter_map"):
+        figure = px.scatter_map(
+            dummy,
+            lat="latitude",
+            lon="longitude",
+            map_style="carto-positron",
+            center=WEST_MAP_CENTER,
+            zoom=WEST_MAP_ZOOM,
+            height=MAP_HEIGHT,
+        )
+    else:
+        figure = px.scatter_mapbox(
+            dummy,
+            lat="latitude",
+            lon="longitude",
+            mapbox_style="carto-positron",
+            center=WEST_MAP_CENTER,
+            zoom=WEST_MAP_ZOOM,
+            height=MAP_HEIGHT,
+        )
+
+    figure.update_traces(
+        marker_size=0,
+        marker_opacity=0,
+        hoverinfo="skip",
+        showlegend=False,
+    )
+
+    figure.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+    )
+
+    return figure
+
+
+def county_probability_map(
+    map_scores: pd.DataFrame,
+    county_geojson: dict,
+):
+    """Create the county probability map with a light basemap."""
+    if hasattr(px, "choropleth_map"):
+        figure = px.choropleth_map(
+            map_scores,
+            geojson=county_geojson,
+            locations="county_geoid",
+            featureidkey="properties.county_geoid",
+            color="map_band",
+            category_orders={"map_band": BAND_ORDER},
+            color_discrete_map=BAND_COLORS,
+            hover_name="county_name",
+            hover_data={
+                "state": True,
+                "county_geoid": False,
+                "predicted_probability": ":.1%",
+                "probability_band": True,
+                "map_band": False,
+            },
+            labels={
+                "state": "State",
+                "predicted_probability": "Probability",
+                "probability_band": "Probability band",
+            },
+            map_style="carto-positron",
+            center=WEST_MAP_CENTER,
+            zoom=WEST_MAP_ZOOM,
+            opacity=0.78,
+            height=MAP_HEIGHT,
+        )
+    else:
+        figure = px.choropleth_mapbox(
+            map_scores,
+            geojson=county_geojson,
+            locations="county_geoid",
+            featureidkey="properties.county_geoid",
+            color="map_band",
+            category_orders={"map_band": BAND_ORDER},
+            color_discrete_map=BAND_COLORS,
+            hover_name="county_name",
+            hover_data={
+                "state": True,
+                "county_geoid": False,
+                "predicted_probability": ":.1%",
+                "probability_band": True,
+                "map_band": False,
+            },
+            labels={
+                "state": "State",
+                "predicted_probability": "Probability",
+                "probability_band": "Probability band",
+            },
+            mapbox_style="carto-positron",
+            center=WEST_MAP_CENTER,
+            zoom=WEST_MAP_ZOOM,
+            opacity=0.78,
+            height=MAP_HEIGHT,
+        )
+
+    figure.update_traces(
+        marker_line_width=0.35,
+        marker_line_color="rgba(60, 60, 60, 0.55)",
+    )
+
+    figure.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend=dict(
+            title="Probability band",
+            orientation="h",
+            yanchor="bottom",
+            y=0.01,
+            xanchor="center",
+            x=0.5,
+            bgcolor="rgba(255,255,255,0.85)",
+        ),
+    )
+
+    return figure
 
 
 require_files()
@@ -217,10 +362,11 @@ with st.expander(
 
 
 available_months = sorted(
-    scores["month_start"]
-    .dropna()
-    .unique()
-    .tolist()
+    pd.to_datetime(
+        scores["month_start"]
+        .dropna()
+        .unique()
+    ).tolist()
 )
 
 available_states = sorted(
@@ -245,19 +391,61 @@ selected_month = st.sidebar.selectbox(
     ).strftime("%B %Y"),
 )
 
-selected_states = st.sidebar.multiselect(
-    "States",
-    options=available_states,
-    default=available_states,
+st.sidebar.markdown("**States**")
+
+# Initialize all states as selected on the first page load.
+if "probability_states_initialized" not in st.session_state:
+    for state in available_states:
+        st.session_state[f"probability_state_{state}"] = True
+    st.session_state["probability_states_initialized"] = True
+
+button_col1, button_col2 = st.sidebar.columns(2)
+
+with button_col1:
+    if st.button("Select all", use_container_width=True):
+        for state in available_states:
+            st.session_state[f"probability_state_{state}"] = True
+
+with button_col2:
+    if st.button("Clear", use_container_width=True):
+        for state in available_states:
+            st.session_state[f"probability_state_{state}"] = False
+
+with st.sidebar.expander("Choose states", expanded=True):
+    state_cols = st.columns(3)
+
+    for index, state in enumerate(available_states):
+        with state_cols[index % 3]:
+            st.checkbox(
+                state,
+                key=f"probability_state_{state}",
+            )
+
+selected_states = [
+    state
+    for state in available_states
+    if st.session_state.get(
+        f"probability_state_{state}",
+        False,
+    )
+]
+
+if not selected_states:
+    st.sidebar.info(
+        "No states selected. Showing blank basemap."
+    )
+
+minimum_probability_percent = st.sidebar.slider(
+    "Minimum displayed probability",
+    min_value=0,
+    max_value=100,
+    value=0,
+    step=5,
+    format="%d%%",
 )
 
-minimum_probability = st.sidebar.slider(
-    "Minimum displayed probability",
-    min_value=0.0,
-    max_value=1.0,
-    value=0.0,
-    step=0.05,
-    format="%.0f%%",
+minimum_probability = (
+    minimum_probability_percent / 100
 )
 
 
@@ -265,27 +453,41 @@ selected_month = pd.Timestamp(
     selected_month
 )
 
-month_scores = scores[
-    (
-        scores["month_start"]
-        == selected_month
-    )
-    & (
-        scores["state"]
-        .astype(str)
-        .isin(selected_states)
-    )
-].copy()
-
-display_scores = month_scores[
-    month_scores["predicted_probability"]
-    >= minimum_probability
-].copy()
+if selected_states:
+    month_scores = scores[
+        (
+            scores["month_start"]
+            == selected_month
+        )
+        & (
+            scores["state"]
+            .astype(str)
+            .isin(selected_states)
+        )
+    ].copy()
+else:
+    month_scores = scores.iloc[0:0].copy()
 
 
 if month_scores.empty:
+    st.divider()
+
+    st.header(
+        f"County probability map — "
+        f"{selected_month.strftime('%B %Y')}"
+    )
+
     st.info(
-        "No county scores match the selected month and states."
+        "No states are selected. The basemap is shown without county probability overlays."
+    )
+
+    st.plotly_chart(
+        blank_probability_map(),
+        use_container_width=True,
+        config={
+            "scrollZoom": True,
+            "displayModeBar": False,
+        },
     )
 
     st.stop()
@@ -372,99 +574,37 @@ st.header(
     f"{selected_month.strftime('%B %Y')}"
 )
 
-if display_scores.empty:
-    st.info(
-        "No counties meet the minimum displayed probability."
-    )
-else:
-    band_order = [
-        "Below threshold",
-        "Very low",
-        "Low",
-        "Moderate",
-        "High",
-        "Very high",
-    ]
+map_scores = month_scores.copy()
 
-    band_colors = {
-        "Below threshold": "#e5e7eb",
-        "Very low": "#fff7bc",
-        "Low": "#fec44f",
-        "Moderate": "#fe9929",
-        "High": "#ec7014",
-        "Very high": "#993404",
-    }
-    
-    map_scores = month_scores.copy()
+map_scores["map_band"] = (
+    map_scores["probability_band"]
+    .astype(str)
+)
 
-    map_scores["map_band"] = map_scores["probability_band"].astype(str)
+map_scores.loc[
+    map_scores["predicted_probability"]
+    < minimum_probability,
+    "map_band",
+] = "Below threshold"
 
-    map_scores.loc[
-        map_scores["predicted_probability"] < minimum_probability,
-        "map_band",
-    ] = "Below threshold"
-    
-    
-    map_figure = px.choropleth_map(
-        map_scores,
-        geojson=county_geojson,
-        locations="county_geoid",
-        featureidkey="properties.county_geoid",
-        color="map_band",
-        category_orders={"map_band": band_order},
-        color_discrete_map=band_colors,
-        hover_name="county_name",
-        hover_data={
-            "state": True,
-            "county_geoid": False,
-            "predicted_probability": ":.1%",
-            "probability_band": True,
-            "map_band": False,
-        },
-        labels={
-            "state": "State",
-            "predicted_probability": "Probability",
-            "probability_band": "Probability band",
-        },
-        map_style="carto-positron",
-        center={"lat": 40.0, "lon": -115.0},
-        zoom=3.35,
-        opacity=0.78,
-        height=720,
-    )
-    
-    map_figure.update_traces(
-        marker_line_width=0.35,
-        marker_line_color="rgba(60, 60, 60, 0.55)",
-    )
-    
-    map_figure.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
-        legend=dict(
-            title="Probability band",
-            orientation="h",
-            yanchor="bottom",
-            y=0.01,
-            xanchor="center",
-            x=0.5,
-            bgcolor="rgba(255,255,255,0.85)",
-        ),
-    )
-    
-    st.plotly_chart(
-        map_figure,
-        use_container_width=True,
-        config={
-            "scrollZoom": True,
-            "displayModeBar": False,
-        },
-    )
+map_figure = county_probability_map(
+    map_scores,
+    county_geojson,
+)
+
+st.plotly_chart(
+    map_figure,
+    use_container_width=True,
+    config={
+        "scrollZoom": True,
+        "displayModeBar": False,
+    },
+)
 
 st.caption(
-    "Counties hidden by the minimum-probability control are "
-    "not shown. Probability is modeled at county-month scale "
-    "and does not indicate where within a county fire activity "
-    "may occur."
+    "Counties below the minimum-probability threshold are shown in gray. "
+    "Probability is modeled at county-month scale and does not indicate "
+    "where within a county fire activity may occur."
 )
 
 
